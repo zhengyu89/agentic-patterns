@@ -18,9 +18,9 @@ You must always output the revised content.
 """
 
 BASE_REFLECTION_SYSTEM_PROMPT = """
-You are tasked with generating critique and recommendations to the user's generated content.
+You task is to critique the provided LinkedIn post on two key areas: Creativity and Format.
 If the user content has something wrong or something to be improved, output a list of recommendations
-and critiques. If the user content is ok and there's nothing to change, output this: <OK>
+and critiques, do not include <OK>. If the user content is ok and there's nothing to change, output this: <OK>
 """
 
 
@@ -120,7 +120,7 @@ class ReflectionAgent:
         reflection_system_prompt += BASE_REFLECTION_SYSTEM_PROMPT
 
         # Given the iterative nature of the Reflection Pattern, we might exhaust the LLM context (or
-        # make it really slow). That's the reason I'm limitting the chat history to three messages.
+        # make it really slow). That's the reason I'm limitting the chat history to five messages.
         # The `FixedFirstChatHistory` is a very simple class, that creates a Queue that always keeps
         # fixeed the first message. I thought this would be useful for maintaining the system prompt
         # in the chat history.
@@ -128,14 +128,38 @@ class ReflectionAgent:
             [
                 build_prompt_structure(prompt=generation_system_prompt, role="system"),
                 build_prompt_structure(prompt=user_msg, role="user"),
+
             ],
-            total_length=3,
+            total_length=5,
         )
 
         reflection_history = FixedFirstChatHistory(
             [build_prompt_structure(prompt=reflection_system_prompt, role="system")],
-            total_length=3,
+            total_length=5,
         )
+
+        # Add one shot prompt
+        reflection_history.extend([
+            {
+                "role": "user",
+                "content": 
+                """
+                # Example content for critique:
+                AI is changing everything. If you're not using AI tools you are missing out. I think everyone should learn how to use AI in their job because it makes you so much more productive and it's the future of work. Companies are looking for people with AI skills.
+                #AI #FutureOfWork #Tech #Innovation #Productivity #ArtificialIntelligence #CareerDev
+                """
+            },
+            {
+                "role": "assistant",
+                "content": """
+                When checking, make sure the post content is always less then 100 words.
+                # Example Critique:
+                Here is a format critique of your LinkedIn post:
+                Readability: The post is a single, large block of text, which is very difficult to read on a screen. It needs to be broken down into short, scannable sentences and paragraphs, with plenty of whitespace in between to make it more inviting.
+                Hashtags: There are too many hashtags (7), and some are too generic. This can look spammy. It's better to stick to 3-5 highly relevant and specific hashtags.
+                """
+            }
+        ])
 
         for step in range(n_steps):
             if verbose > 0:
