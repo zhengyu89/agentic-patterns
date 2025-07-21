@@ -1,6 +1,6 @@
 # My Agentic Patterns Journey
 
-> **Attribution:** This project is my personal fork of the excellent [agentic-patterns]([https://github.com/neural-maze/agentic-patterns](https://github.com/neural-maze/agentic-patterns-course)) repository by **neural-maze**. Proper attribution is a core practice in the open-source community, and I want to acknowledge the original author for their foundational work.
+> **Attribution:** This project is my personal fork of the excellent [agentic-patterns]([https://github.com/neural-maze/agentic-patterns-course]) repository by **neural-maze**. Proper attribution is a core practice in the open-source community, and I want to acknowledge the original author for their foundational work.
 
 <p align="center">
   <img alt="logo" src="img/agentic_patterns.png" width=600 />
